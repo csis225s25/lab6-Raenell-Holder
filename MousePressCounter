@@ -1,0 +1,97 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+/**
+ * Lab 5 demo of mouse events.
+ * 
+ * @author Jamie Martino
+ * @author Rae Holder
+ * @version Spring 2025
+ */
+public class MousePressCounter extends MouseAdapter implements Runnable {
+
+	private int counter =0;
+	private JPanel panel1;
+	/**
+	 * The run method to set up the graphical user interface
+	 */
+	@Override
+	public void run() {
+
+		JFrame.setDefaultLookAndFeelDecorated(true);
+		JFrame frame = new JFrame("MouseDemo");
+		frame.setPreferredSize(new Dimension(500, 500));
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		// construct an anonymous class that extends JPanel,
+		// for which we override the paintComponent method
+		JPanel panel = new JPanel(new BorderLayout());
+		 
+		panel1= new JPanel(){
+			@Override
+			protected void paintComponent(Graphics g) {
+
+				super.paintComponent(g);
+
+				FontMetrics fm = g.getFontMetrics();
+
+				String toDisplay = "Mouse press count:" + counter;
+				int stringWidth = fm.stringWidth(toDisplay);
+				int stringAscent = fm.getAscent();
+
+				int xStart = getWidth() / 2 - stringWidth / 2;
+				int yStart = getHeight() / 2 + stringAscent / 2;
+
+				g.drawString(toDisplay, xStart, yStart);
+			}
+		};
+
+		JButton reset = new JButton("Reset");
+		reset.addActionListener(e-> {
+			    counter =0;	
+				panel1.repaint();
+
+		});
+
+        panel1.addMouseListener(this);
+		panel1.setPreferredSize(new Dimension(500, 400));
+
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(reset);
+		panel.add(panel1, BorderLayout.CENTER);
+		panel.add(buttonPanel, BorderLayout.SOUTH);
+
+		frame.add(panel);
+		
+		// display the window we've created
+		frame.pack();
+		frame.setVisible(true);
+	}
+
+   @Override
+	public void mousePressed(MouseEvent e) {
+		mousePressCounter(e);
+		System.out.println("mousePressed: " + e);
+	}
+
+	/**
+	 * Method to count the number of times the mouse is pressed
+	 * 
+	 * @param e the mouse event
+	 * @return the number of times the mouse is pressed
+	 */
+	public void mousePressCounter(MouseEvent e) {
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			counter++;
+		    panel1.repaint();
+			
+		}
+		
+	}
+
+	public static void main(String args[]) {
+		javax.swing.SwingUtilities.invokeLater(new MousePressCounter());
+	}
+}
+
